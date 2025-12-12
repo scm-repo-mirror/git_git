@@ -9,6 +9,15 @@ object_type_disk_usage() {
 		--filter=object:type=$1 | awk '{ sum += $1 } END { print sum }'
 }
 
+strip_object_disk_usage() {
+	awk '
+		/^\|   \* Disk size/ { skip=1; next }
+		skip && /^\|     \* / { next }
+		skip && !/^\|     \* / { skip=0 }
+		{ print }
+	' $1
+}
+
 test_expect_success 'empty repository' '
 	test_when_finished "rm -rf repo" &&
 	git init repo &&
@@ -31,6 +40,11 @@ test_expect_success 'empty repository' '
 		|     * Blobs          |    0   |
 		|     * Tags           |    0   |
 		|   * Inflated size    |    0 B |
+		|     * Commits        |    0 B |
+		|     * Trees          |    0 B |
+		|     * Blobs          |    0 B |
+		|     * Tags           |    0 B |
+		|   * Disk size        |    0 B |
 		|     * Commits        |    0 B |
 		|     * Trees          |    0 B |
 		|     * Blobs          |    0 B |
@@ -81,7 +95,10 @@ test_expect_success SHA1 'repository with references and objects' '
 		|     * Tags           |    132 B   |
 		EOF
 
-		git repo structure >out 2>err &&
+		git repo structure >out.raw 2>err &&
+
+		# Skip object disk sizes due to platform variance.
+		strip_object_disk_usage out.raw >out &&
 
 		test_cmp expect out &&
 		test_line_count = 0 err
