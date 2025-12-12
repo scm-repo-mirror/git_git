@@ -836,6 +836,29 @@ void strbuf_addstr_urlencode(struct strbuf *sb, const char *s,
 	strbuf_add_urlencode(sb, s, strlen(s), allow_unencoded_fn);
 }
 
+char *strbuf_humanise_count_value(struct strbuf *buf, size_t value)
+{
+	if (value >= 1000000000) {
+		uintmax_t x = (uintmax_t)value + 5000000; /* for rounding */
+		strbuf_addf(buf, "%" PRIuMAX ".%02" PRIuMAX,
+			    x / 1000000000, x % 1000000000 / 10000000);
+		return xstrfmt(_("G"));
+	} else if (value >= 1000000) {
+		uintmax_t x = (uintmax_t)value + 5000; /* for rounding */
+		strbuf_addf(buf, "%" PRIuMAX ".%02" PRIuMAX,
+			    x / 1000000, x % 1000000 / 10000);
+		return xstrfmt(_("M"));
+	} else if (value >= 1000) {
+		uintmax_t x = (uintmax_t)value + 5; /* for rounding */
+		strbuf_addf(buf, "%" PRIuMAX ".%02" PRIuMAX,
+			    x / 1000, x % 1000 / 10);
+		return xstrfmt(_("k"));
+	} else {
+		strbuf_addf(buf, "%" PRIuMAX, (uintmax_t)value);
+		return NULL;
+	}
+}
+
 char *strbuf_humanise_bytes_value(struct strbuf *buf, off_t bytes, unsigned flags)
 {
 	int humanise_rate = flags & STRBUF_HUMANISE_RATE;
