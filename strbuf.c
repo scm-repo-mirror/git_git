@@ -882,6 +882,10 @@ char *strbuf_humanise_bytes_value(struct strbuf *buf, off_t bytes, unsigned flag
 		return humanise_rate ? xstrfmt(_("KiB/s")) : xstrfmt(_("KiB"));
 	} else {
 		strbuf_addf(buf, "%u", (unsigned)bytes);
+		if (flags & STRBUF_HUMANISE_COMPACT)
+			return humanise_rate ?
+				       xstrfmt(_("B/s")) :
+				       xstrfmt(_("B"));
 		return humanise_rate ?
 			       /* TRANSLATORS: IEC 80000-13:2008 byte/second */
 			       xstrfmt(Q_("byte/s", "bytes/s", bytes)) :

@@ -367,7 +367,8 @@ void strbuf_addbuf_percentquote(struct strbuf *dst, const struct strbuf *src);
  */
 void strbuf_add_percentencode(struct strbuf *dst, const char *src, int flags);
 
-#define STRBUF_HUMANISE_RATE 1 << 0
+#define STRBUF_HUMANISE_RATE	1 << 0
+#define STRBUF_HUMANISE_COMPACT 1 << 1
 
 /**
  * Append the given byte size as a human-readable string that is downscaled by
