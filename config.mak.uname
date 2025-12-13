@@ -172,6 +172,13 @@ ifeq ($(uname_S),Darwin)
                 endif
         endif
 
+        ifeq ($(shell test -d /usr/local/opt/libiconv/ && echo y),y)
+		HOMEBREW_ICONVDIR = /usr/local/opt/libiconv
+        endif
+        ifeq ($(shell test -d /opt/homebrew/opt/libiconv/ && echo y),y)
+		HOMEBREW_ICONVDIR = /opt/homebrew/opt/libiconv
+        endif
+
 	# The builtin FSMonitor on MacOS builds upon Simple-IPC.  Both require
 	# Unix domain sockets and PThreads.
         ifndef NO_PTHREADS
