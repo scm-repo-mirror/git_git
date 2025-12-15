@@ -210,6 +210,19 @@ struct packed_git *packfile_store_load_pack(struct packfile_store *store,
 int packfile_store_freshen_object(struct packfile_store *store,
 				  const struct object_id *oid);
 
+enum kept_pack_type {
+	KEPT_PACK_ON_DISK = (1 << 0),
+	KEPT_PACK_IN_CORE = (1 << 1),
+};
+
+/*
+ * Retrieve the cache of kept packs from the given packfile store. Accepts a
+ * combination of `kept_pack_type` flags. The cache is computed on demand and
+ * will be recomputed whenever the flags change.
+ */
+struct packed_git **packfile_store_get_kept_pack_cache(struct packfile_store *store,
+						       unsigned flags);
+
 struct pack_window {
 	struct pack_window *next;
 	unsigned char *base;
@@ -385,9 +398,6 @@ int packed_object_info(struct repository *r,
 void mark_bad_packed_object(struct packed_git *, const struct object_id *);
 const struct packed_git *has_packed_and_bad(struct repository *, const struct object_id *);
 
-#define ON_DISK_KEEP_PACKS 1
-#define IN_CORE_KEEP_PACKS 2
-
 /*
  * Iff a pack file in the given repository contains the object named by sha1,
  * return true and store its location to e.
@@ -397,8 +407,6 @@ int find_kept_pack_entry(struct repository *r, const struct object_id *oid, unsi
 int has_object_pack(struct repository *r, const struct object_id *oid);
 int has_object_kept_pack(struct repository *r, const struct object_id *oid,
 			 unsigned flags);
-
-struct packed_git **kept_pack_cache(struct repository *r, unsigned flags);
 
 /*
  * Return 1 if an object in a promisor packfile is or refers to the given
