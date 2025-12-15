@@ -16,3 +16,15 @@ endif::git-commit[]
 +
 The `--no-signoff` option can be used to countermand an earlier `--signoff`
 option on the command line.
++
+As it makes it harder to argue against one who tells the court "the
+log message of the commit ends with a `Signed-off-by` trailer by person
+X, but it is very plausible that it was done by inertia without person
+X really intending to certify what DCO says, hence the `Signed-off-by`
+trailer is meaningless", if we add more publicized ways to add
+sign-off automatically. Git does not, and will not, have a
+configuration variable to enable the `--signoff` command line option
+it by default.
++
+There exists `format.signoff`, but that is a historical mistake, and
+it is not an excuse to pile on more mistakes of the same kind on top.
